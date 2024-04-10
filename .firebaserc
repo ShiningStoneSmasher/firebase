@@ -1,0 +1,14 @@
+{
+  "targets": {
+    "danotes-c3e97": {
+      "hosting": {
+        "da-keep": [
+          "danotes-c3e97"
+        ]
+      }
+    }
+  },
+  "projects": {
+    "default": "danotes-c3e97"
+  }
+}
