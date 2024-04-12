@@ -18,6 +18,7 @@ import { Observable } from 'rxjs';
 export class NoteListService {
   trashNotes: Note[] = [];
   normalNotes: Note[] = [];
+  normalMarkedNotes: Note[] = [];
 
   unsubTrash;
   unsubNotes;
@@ -37,12 +38,13 @@ export class NoteListService {
 
   async updateNote(note: Note) {
     if (note.id) {
-      let docRef = this.getSingleDocRef(this.getColIdfromNote(note), note.id);
-      await updateDoc(docRef, this.getCleanJson(note))
-        .catch((err) => {
-          console.log(err);
-        })
-        .then();
+      const docRef = this.getSingleDocRef(this.getColIdfromNote(note), note.id);
+      try {
+        await updateDoc(docRef, this.getCleanJson(note))
+        console.log("Document updated successfully");
+      } catch (err) {
+        console.error("Error updating document:", err);
+      }
     }
   }
 
@@ -64,13 +66,16 @@ export class NoteListService {
   }
 
   async addNote(item: Note, colId: "notes" | "trash") {
-    await addDoc(this.getNotesRef(), item)
+    if (colId == 'notes') {
+      await addDoc(this.getNotesRef(), item)
       .catch((err) => {
         console.error(err);
       })
       .then((docRef) => {
         console.log('Document written with ID: ', docRef?.id);
       });
+    }
+    
   }
 
   subTrashList() {
@@ -105,8 +110,6 @@ export class NoteListService {
       marked: obj.marked || false,
     };
   }
-
-  //     const itemCollection = collection(this.firestore, 'items');
 
   getNotesRef() {
     return collection(this.firestore, 'notes');
